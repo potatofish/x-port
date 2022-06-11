@@ -2,6 +2,8 @@
 tmp/
 old/
 tools/
+data/
+builds/
 node_modules/
 *.pdn
 *.sublime*
