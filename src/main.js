@@ -1,4 +1,9 @@
 /* jshint eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:false, strict:true, undef:true, curly:false, browser:true, devel:true, newcap:false, maxerr:50, esnext:true */
+// TODO NPM install all submodules
+// TODO change this to being a package that can be called externally like a database lookup
+// TODO replace tabs in a single check in that is only TABs changes
+// TODO clean up naming as I better understand
+
 (function (window, _GM) {
 	"use strict";
 
