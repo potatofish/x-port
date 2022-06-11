@@ -20,6 +20,7 @@
             });
         };
     };
+    
     const GM = ((GM) => {
         if (GM !== null && typeof(GM) === "object") {
             return GM;
