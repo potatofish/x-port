@@ -142,6 +142,8 @@ async function processFavourites(err, data) {
     tagArray.forEach(tag => {
         console.log(tag);
     });
+
+    // TODO Add logic to serve a website with the results
 }
 
 (async function Main() {
