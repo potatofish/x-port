@@ -1,0 +1,19 @@
+table
+    tr
+        th Category
+        th Subcategory
+        th Galleries<br>Favourited
+        th Search Link
+        th Gallery Links
+    each tag in locals
+        tr 
+            td #{tag.category}
+            td #{tag.subcategory}
+            td #{tag.size}
+            td 
+                a(href=tag.url) Link
+            td 
+                each gallery in tag.galleries
+                    a(href='https://e-hentai.org/g/'+gallery[0]+'/'+gallery[1]+'/') Link, 
+            
+

@@ -11,3 +11,5 @@ test/
 
 *.lnk
 post_build*.*
+results.html
+results2.log

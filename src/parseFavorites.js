@@ -1,10 +1,14 @@
 const fs = require('fs');
 const axios = require('axios');
 const util = require('util');
+const pug = require('pug');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const favouritesFile = './data/favorites.txt';
 // const favouritesFile = './data/favoritesCopy.txt';
+
+const pugSourceFile = './resources/pugSource/parseFavorites.pug';
+const summarizeToHTML = pug.compileFile(pugSourceFile);
 
 const postURL = 'https://api.e-hentai.org/api.php';
 const tagURLPrefix = 'https://e-hentai.org/tag/'
@@ -139,9 +143,14 @@ async function processFavourites(err, data) {
         // a must be equal to b
         return 0;
     });
-    tagArray.forEach(tag => {
-        console.log(tag);
-    });
+    // tagArray.forEach(tag => {
+    //     //table(style='width:100%', border='1')
+    //     //console.log(pug.render("table(style='width:100%', border='1')"));
+    //     console.log(summarizeToHTML(tag));
+    // });
+    // https://codepen.io/yoanmarchal/pen/qXojEM
+    console.log(summarizeToHTML(tagArray));
+    
 
     // TODO Add logic to serve a website with the results
 }
