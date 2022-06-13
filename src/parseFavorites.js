@@ -7,6 +7,24 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 const favouritesFile = './data/favorites.txt';
 // const favouritesFile = './data/favoritesCopy.txt';
 
+//div.gt{float:left;font-weight:bold;padding:1px 4px;margin:0 2px 5px 2px;position:relative;border-radius:5px;border:1px solid #806769;background:#F2EFDF}
+
+console.log("<head>");
+console.log("<link rel='stylesheet' href='./resources/stylesheets/style.css'>");
+console.log("</head>");
+console.log("<body style='font-size:8pt;font-family:arial,helvetica,sans-serif;color:#5C0D11;background:#E3E0D1;padding:2px;margin:0;text-align:center'>");
+console.log("<div style='width:100%;text-align:center'>");
+console.log("<textarea class='xport_info_textarea' style='width:80%;display:inline-block'>");
+
+/*
+<div class="xport_info_box">
+    <div class="xport_info_header">
+        <div class="xport_info_progress_container1">
+            <div class="xport_info_progress_container2"><div class="xport_info_progress" style="width: 100%;"></div></div></div><div class="xport_info_header_content"><span class="xport_info_header_title">Exported</span><span class="xport_info_header_status xport_info_header_status_hidden">100%</span></div></div><div class="xport_info_content"><div class="xport_info_content_links"><a class="xport_info_content_link">Hide List</a> | <a class="xport_info_content_link">Copy</a> | <a class="xport_info_content_link">Download</a> | <a class="xport_info_content_link">Omit Titles</a> | <span class="xport_info_content_text">Total: 548</span></div></div><div class="xport_info_textarea_container"><div class="xport_info_textarea_line_container"><div class="xport_info_textarea_line"></div></div><textarea class="xport_info_textarea" spellcheck="false" placeholder=""></textarea></div><textarea class="xport_hidden_textarea" style="display: none;"></textarea></div>
+*/
+
+
+
 const pugSourceFile = './resources/pugSource/parseFavorites.pug';
 const summarizeToHTML = pug.compileFile(pugSourceFile);
 
@@ -149,7 +167,14 @@ async function processFavourites(err, data) {
     //     console.log(summarizeToHTML(tag));
     // });
     // https://codepen.io/yoanmarchal/pen/qXojEM
+    console.log("</textarea>");
+    console.log("<div id='tag_table' class='xport_info_box' style='width:1005'>");
     console.log(summarizeToHTML(tagArray));
+    console.log("</div>");
+    console.log("</div>");
+
+    console.log("</body>");
+
     
 
     // TODO Add logic to serve a website with the results

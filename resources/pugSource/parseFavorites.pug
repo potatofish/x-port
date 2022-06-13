@@ -1,19 +1,27 @@
 script(src='./resources/javascripts/sortTable.js')
 table(id="tagSummaryTable")
     tr
-        th(onclick="sortTable(0)") Category
-        th(onclick="sortTable(1)") Subcategory
-        th(onclick="sortTable(2)") Galleries<br>Favourited
+        th(id="string" onclick="sortTable(0)") Category
+        th(id="string" onclick="sortTable(1)") Subcategory
+        th(id="number" onclick="sortTable(2)") Galleries<br>Favourited
         th Gallery Links
     each tag in locals
         tr 
-            td(id="tdcat_"+tag.category)
-                a(href=tag.url) #{tag.category}
-            td(id="tdsubcat_"+tag.subcategory) 
-                a(href=tag.url) #{tag.subcategory}
-            td(id="tdsize_"+tag.size) #{tag.size}
-            td 
-                each gallery in tag.galleries
-                    a(href='https://e-hentai.org/g/'+gallery[0]+'/'+gallery[1]+'/') Link, 
+            td(id="tdcat_"+tag.category class="xport_favourite_cell")
+                div(style="display: inline-block")
+                    div(class="gt")
+                        a(href=tag.url) #{tag.category}
+            td(id="tdsubcat_"+tag.subcategory class="xport_favourite_cell") 
+                div(style="display: inline-block")
+                    div(class="gt")
+                        a(href=tag.url) #{tag.subcategory}
+            td(id="tdsize_"+tag.size class="xport_favourite_cell") 
+                div(style="display: inline-block")
+                    div(class="gt") #{tag.size}
+            td(class="xport_favourite_cell" style="width:80%; text-align:left")
+                div(style="height:5.5em;overflow:auto") 
+                    each gallery in tag.galleries
+                        div(class="gt")
+                            a(href='https://e-hentai.org/g/'+gallery[0]+'/'+gallery[1]+'/') Link, 
             
 

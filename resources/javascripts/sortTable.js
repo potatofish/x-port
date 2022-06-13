@@ -15,7 +15,7 @@ function sortTable(columnIdx) {
         const row = table.rows[rowIndex];
         // console.log(row.cells[0].tagName);
         if(row.cells[0].tagName === "TD")
-        rowArray.push(row)
+          rowArray.push(row)
       }
     }
     
@@ -39,17 +39,38 @@ function sortTable(columnIdx) {
       nextlabel = labelDesc; 
       sortReturn = -1;
     }
+
+    const sortDataType = table.rows[headerRowIdx].cells[columnIdx].id;
+    console.log({sortDataType});
     //https://stackoverflow.com/questions/282670/easiest-way-to-sort-dom-nodes
-    rowArray.sort((a, b) => {
+    rowArray.sort((rowA, rowB) => {
       // console.log({aid: a.cells[n].id, bid: b.cells[n].id});
 
       // TODO split id field into a format of "type"
       // TODO revisit and make this sort off of content
-      if (a.cells[columnIdx].id > b.cells[columnIdx].id) {
+      var rowAValue, rowBValue = undefined;
+      switch (sortDataType) {
+        case "string":
+          rowAValue = rowA.cells[columnIdx].id;
+          rowBValue = rowB.cells[columnIdx].id;
+          break;
+        case "number":
+          //rowA.cells[columnIdx].childNodes[lastHeaderLineIdx].data
+          rowAValue = parseInt(rowA.cells[columnIdx].childNodes[1].childNodes[0].innerText);
+          rowBValue = parseInt(rowB.cells[columnIdx].childNodes[1].childNodes[0].innerText);
+          // console.log({rowA: rowA.cells[columnIdx].childNodes[1].childNodes[0].innerText, rowB: rowB.cells[columnIdx].childNodes[1].childNodes[0].innerText});
+          break;
+        default:
+          rowAValue = rowA.cells[columnIdx].id;
+          rowBValue = rowB.cells[columnIdx].id;
+          break;
+      }
+
+      if (rowAValue > rowBValue) {
         // console.log("Move:", {aid: a.cells[n].id, bid: b.cells[n].id});
         return sortReturn*1;
       }
-      if (a.cells[columnIdx].id < b.cells[columnIdx].id) {
+      if (rowAValue < rowBValue) {
         return sortReturn*-1;
       }
       // a must be equal to b
