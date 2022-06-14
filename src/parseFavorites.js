@@ -4,8 +4,8 @@ const util = require('util');
 const pug = require('pug');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-// const favouritesFile = './data/favorites.txt';
-const favouritesFile = './data/favoritesCopy.txt';
+const favouritesFile = './data/favorites.txt';
+// const favouritesFile = './data/favoritesCopy.txt';
 const favoritesHTML = './results.html';
 
 
@@ -31,7 +31,7 @@ const fsAppendFlag = { flag: 'a+' };
 headerStrings.forEach(element => {
     try {
         fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
-        console.log({element:element});
+        // console.log({element:element});
         // file written successfully
     } catch (err) {
         console.error(err);
@@ -74,6 +74,17 @@ async function processFavourites(err, data) {
     var favouritesData = [];
     var processingLog = [];
 
+    function logProcessing(aStringToLog) {
+        try {
+            var lineToWrite = util.inspect(aStringToLog, {showHidden: false, depth: null, colors: false}) +"\n";
+            fs.writeFileSync(favoritesHTML, lineToWrite, fsAppendFlag);
+            console.log(lineToWrite);
+            // file written successfully
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     var array = data.split("\r\n")
     for(i in array) {
         var entry = array[i];
@@ -84,7 +95,7 @@ async function processFavourites(err, data) {
         var gidlistArrayElement = [entryGalleryID, entryGalleryToken]
         entryQueryJSON.gidlist.push([...gidlistArrayElement]);
         if ( entryQueryJSON.gidlist.length == 25 || i == (array.length - 1)) {
-            processingLog.push("galleries Queued for Lookup: " + entryQueryJSON.gidlist.length);
+            logProcessing("galleries Queued for Lookup: " + entryQueryJSON.gidlist.length);
             
             // TODO Make sure 5 seconds has passed since last API call
             if(completeAPICalls > 0) {
@@ -92,7 +103,7 @@ async function processFavourites(err, data) {
                 while(now - entryStartTime < 100) {
                     now = Date.now();
                 }
-                processingLog.push({entryStartTime, now: new Date(now)});
+                logProcessing({entryStartTime, now: new Date(now)});
             }
             
             // TODO Make POST query call to API
@@ -123,7 +134,7 @@ async function processFavourites(err, data) {
     for (const key in favouritesData) {
         if (Object.hasOwnProperty.call(favouritesData, key)) {
             const tags = favouritesData[key].tags;
-            // processingLog.push({RAW: favouritesData[key]});
+            // logProcessing({gallery: favouritesData[key]});
             for (let tagIndex = 0; tagIndex < tags.length; tagIndex++) {
                 var tag = tags[tagIndex];
                 var categoryKey = tag.split(":")[0];

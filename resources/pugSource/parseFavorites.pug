@@ -1,29 +1,37 @@
 script(src='./resources/javascripts/sortTable.js')
 table(id="tagSummaryTable")
     tr
-        th(id="string" onclick="sortTable(0)") Category
-        th(id="string" onclick="sortTable(1)") Subcategory
-        th(id="number" onclick="sortTable(2)") Galleries<br>Favourited
+        th(style="width:15%" id="string" onclick="sortTable(0)") Category
+        th(style="width:15%" id="string" onclick="sortTable(1)") Subcategory
+        th(style="width:5%" id="number" onclick="sortTable(2)") Count
         th Gallery Links
     each tag in locals
         tr 
-            td(id="tdcat_"+tag.category class="xport_favourite_cell")
+            td(style="vertical-align: center; width:15%" id="tdcat_"+tag.category class="xport_favourite_cell")
                 div(style="display: inline-block")
                     div(class="gt")
                         a(href=tag.url) #{tag.category}
-            td(id="tdsubcat_"+tag.subcategory class="xport_favourite_cell") 
+            td(style="vertical-align: center; width:15%" id="tdsubcat_"+tag.subcategory class="xport_favourite_cell") 
                 div(style="display: inline-block")
                     div(class="gt")
                         a(href=tag.url) #{tag.subcategory}
-            td(id="tdsize_"+tag.size class="xport_favourite_cell") 
+                    br 
+                    sup(style="font-size: 0.6em")
+                        a(href="https://ehwiki.org/wiki/"+tag.subcategory) [?]
+            td(style="width:5%" id="tdsize_"+tag.size class="xport_favourite_cell") 
                 div(style="display: inline-block")
                     div(class="gt") #{tag.size}
-            td(class="xport_favourite_cell" style="width:80%; text-align:left")
-                div(style="height:5.5em;overflow:auto") 
-                    each gallery in tag.galleries
-                        div(class="gt")
-                            a(href='https://e-hentai.org/g/'+gallery[0]+'/'+gallery[1]+'/') #{gallery[2]}, 
-                            br
-                            |
+            td(class="xport_favourite_cell" style="width:80%; text-align:left; line-height: 86%; font-size: 1.0em")
+                div(style="height:5.5em;overflow:auto; resize: vertical") 
+                    table(id="galleries")
+                        each gallery in tag.galleries
+                            tr 
+                                td
+                                    div(class="gt")
+                                        a(href='https://e-hentai.org/g/'+gallery[0]+'/'+gallery[1]+'/') #{gallery[2]}
+                        // br 
+                        // br
+                        
+                            
             
 
