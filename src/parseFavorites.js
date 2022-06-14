@@ -4,17 +4,39 @@ const util = require('util');
 const pug = require('pug');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-const favouritesFile = './data/favorites.txt';
-// const favouritesFile = './data/favoritesCopy.txt';
+// const favouritesFile = './data/favorites.txt';
+const favouritesFile = './data/favoritesCopy.txt';
+const favoritesHTML = './results.html';
 
-//div.gt{float:left;font-weight:bold;padding:1px 4px;margin:0 2px 5px 2px;position:relative;border-radius:5px;border:1px solid #806769;background:#F2EFDF}
 
-console.log("<head>");
-console.log("<link rel='stylesheet' href='./resources/stylesheets/style.css'>");
-console.log("</head>");
-console.log("<body style='font-size:8pt;font-family:arial,helvetica,sans-serif;color:#5C0D11;background:#E3E0D1;padding:2px;margin:0;text-align:center'>");
-console.log("<div style='width:100%;text-align:center'>");
-console.log("<textarea class='xport_info_textarea' style='width:80%;display:inline-block'>");
+// write a newline to file to clear it
+try {
+    fs.writeFileSync(favoritesHTML, "\n");
+    // file written successfully
+} catch (err) {
+    console.error(err);
+}
+
+var headerStrings = [
+    "<head>", 
+    "<link rel='stylesheet' href='./resources/stylesheets/style.css'>",
+    "</head>",
+    "<body style='font-size:8pt;font-family:arial,helvetica,sans-serif;color:#5C0D11;background:#E3E0D1;padding:2px;margin:0;text-align:center'>",
+    "<div style='width:100%;text-align:center'>",
+    "<textarea class='xport_info_textarea' style='width:80%;display:inline-block'>"
+];
+const fsAppendFlag = { flag: 'a+' };
+
+
+headerStrings.forEach(element => {
+    try {
+        fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
+        console.log({element:element});
+        // file written successfully
+    } catch (err) {
+        console.error(err);
+    }
+});
 
 /*
 <div class="xport_info_box">
@@ -50,6 +72,7 @@ async function processFavourites(err, data) {
     var entryStartTime = new Date();
     var now = entryStartTime;
     var favouritesData = [];
+    var processingLog = [];
 
     var array = data.split("\r\n")
     for(i in array) {
@@ -61,7 +84,7 @@ async function processFavourites(err, data) {
         var gidlistArrayElement = [entryGalleryID, entryGalleryToken]
         entryQueryJSON.gidlist.push([...gidlistArrayElement]);
         if ( entryQueryJSON.gidlist.length == 25 || i == (array.length - 1)) {
-            console.log("galleries Queued for Lookup: ", entryQueryJSON.gidlist.length);
+            processingLog.push("galleries Queued for Lookup: " + entryQueryJSON.gidlist.length);
             
             // TODO Make sure 5 seconds has passed since last API call
             if(completeAPICalls > 0) {
@@ -69,7 +92,7 @@ async function processFavourites(err, data) {
                 while(now - entryStartTime < 100) {
                     now = Date.now();
                 }
-                console.log({entryStartTime, now: new Date(now)});
+                processingLog.push({entryStartTime, now: new Date(now)});
             }
             
             // TODO Make POST query call to API
@@ -100,9 +123,10 @@ async function processFavourites(err, data) {
     for (const key in favouritesData) {
         if (Object.hasOwnProperty.call(favouritesData, key)) {
             const tags = favouritesData[key].tags;
+            // processingLog.push({RAW: favouritesData[key]});
             for (let tagIndex = 0; tagIndex < tags.length; tagIndex++) {
                 var tag = tags[tagIndex];
-                var categoryKey = tag.split(":")[0]
+                var categoryKey = tag.split(":")[0];
                 var subCategoryKey = tag.split(":")[1];
                 
                 // temporary tags have no preceeding colon in the metadata, only on the site
@@ -126,7 +150,7 @@ async function processFavourites(err, data) {
                 } 
 
                 //console.log({tagCount: galleryTags[categoryKey][subCategoryKey]});
-                galleryTags[categoryKey][subCategoryKey].push([favouritesData[key].gid, favouritesData[key].token]);
+                galleryTags[categoryKey][subCategoryKey].push([favouritesData[key].gid, favouritesData[key].token, favouritesData[key].title]);
 
                 
             }
@@ -167,14 +191,37 @@ async function processFavourites(err, data) {
     //     console.log(summarizeToHTML(tag));
     // });
     // https://codepen.io/yoanmarchal/pen/qXojEM
-    console.log("</textarea>");
-    console.log("<div id='tag_table' class='xport_info_box' style='width:1005'>");
-    console.log(summarizeToHTML(tagArray));
-    console.log("</div>");
-    console.log("</div>");
+    // console.log({processingLog});
+    processingLog.forEach(element => {
+        try {
+            fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
+            // file written successfully
+        } catch (err) {
+            console.error(err);
+        }
+    });
 
-    console.log("</body>");
+    
+    var bodyStrings = [
+        // ...processingLog,
+        "</textarea>",
+        "<div id='tag_table' class='xport_info_box' style='width:1005'>",
+         summarizeToHTML(tagArray),
+        "</div>",
+        "</div>",
+        "</body>"
+    ];
+    // console.log({bodyStrings});
 
+    bodyStrings.forEach(element => {
+        try {
+            fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
+            // console.log({element});
+            // file written successfully
+        } catch (err) {
+            console.error(err);
+        }
+    });
     
 
     // TODO Add logic to serve a website with the results
