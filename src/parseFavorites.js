@@ -8,8 +8,8 @@ const dom = new JSDOM();
 const parser = new dom.window.DOMParser();
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-const favouritesFile = './data/favorites.txt';
-// const favouritesFile = './data/favoritesCopy.txt';
+// const favouritesFile = './data/favorites.txt';
+const favouritesFile = './data/favoritesCopy.txt';
 const favoritesHTML = './results.html';
 
 
@@ -26,8 +26,9 @@ var headerStrings = [
     "<link rel='stylesheet' href='./resources/stylesheets/style.css'>",
     "</head>",
     "<body style='font-size:8pt;font-family:arial,helvetica,sans-serif;color:#5C0D11;background:#E3E0D1;padding:2px;margin:0;text-align:center'>",
-    "<div style='width:100%;text-align:center'>",
-    "<textarea class='xport_info_textarea' style='width:80%;display:inline-block'>"
+    "<div class='main'>",
+    "<div class='footer' style='position: fixed; border:1px solid #5c0d12;; z-index: 999; height: 60px; bottom:0; left:1em; right:1em;display:inline-block'>",
+    "<textarea class='xport_info_textarea'>"
 ];
 const fsAppendFlag = { flag: 'a+' };
 
@@ -268,9 +269,12 @@ async function processFavourites(err, data) {
     var bodyStrings = [
         // ...processingLog,
         "</textarea>",
-        "<div id='tag_table' class='xport_info_box' style='width:1005'>",
+        "</div>", // closes footer
+        // "<div style='position: fixed; left: 5%; right: 5%; top:0; height: -60px; text-align: center' class='content'>",
+        "<div id='tag_table' class='xport_info_box' style='position: relative; z-index: 99; vertical-align: top; top:0; bottom:60px; left:0; right: 0;display:inline-block'>",
         //  summarizeToHTML(tagArray),
         encodedtagsHTMLTable,
+        "</div>",
         "</div>",
         "</div>",
         "</body>"

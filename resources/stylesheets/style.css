@@ -75,6 +75,11 @@ div.gt {
 	background:#F2EFDF
 }
 
+div.main {
+	width:100%;
+	text-align:center;
+}
+
 
 :root.xport_ex .xport_info_progress_container1 {
 	background-color: #43464e;
