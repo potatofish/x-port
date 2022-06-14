@@ -2,6 +2,10 @@ const fs = require('fs');
 const axios = require('axios');
 const util = require('util');
 const pug = require('pug');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const dom = new JSDOM();
+const parser = new dom.window.DOMParser();
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 const favouritesFile = './data/favorites.txt';
@@ -160,14 +164,57 @@ async function processFavourites(err, data) {
                     //console.log("NO EXIST");
                 } 
 
+                const DOMparsedDocument = parser.parseFromString(favouritesData[key].title, "text/html");
+                // const doubleDOMparsedTitle = parser.parseFromString(DOMparsedTitle, "text/html").body.innerHTML;
                 //console.log({tagCount: galleryTags[categoryKey][subCategoryKey]});
-                galleryTags[categoryKey][subCategoryKey].push([favouritesData[key].gid, favouritesData[key].token, favouritesData[key].title]);
+                // var encodedTitle = decodeURIComponent(favouritesData[key].title)+"[ ]";
+                
+                function decodeEntity(inputStr) {
+                    var textarea = DOMparsedDocument.createElement("textarea");
+                    textarea.innerHTML = inputStr;
+                    return textarea.value;
+                }
+                const HMTLparsedTitle = decodeEntity(DOMparsedDocument.body.innerHTML);
+                
+                // if (favouritesData[key].gid === 2180213) {
+                //     console.log(favouritesData[key].title);
+                //     console.log(decodeEntity(favouritesData[key].title));
+                //     console.log(HMTLparsedTitle);
+                // }
+                //console.log(doubleDOMparsedTitle);
+                galleryTags[categoryKey][subCategoryKey].push([favouritesData[key].gid, favouritesData[key].token, HMTLparsedTitle]);
 
+                // if (encodedTitle !== favouritesData[key].title ) {
+                //     console.log({encodedTitle, title:favouritesData[key].title});
+                // }
                 
             }
 
         }
     }
+    
+
+    for (const category in galleryTags) {
+        if (Object.hasOwnProperty.call(galleryTags, category)) {
+            for (const subcategory in galleryTags[category]) {
+                if (Object.hasOwnProperty.call(galleryTags[category], subcategory)) {
+                    galleryTags[category][subcategory].sort((a, b) => {
+                        // console.log({cat:category + ":" + subcategory, a,b});
+                        if (a[2] < b[2]) {
+                          return -1;
+                        }
+                        if (a[2] > b[2]) {
+                          return 1;
+                        }
+                        // a must be equal to b
+                        return 0;
+                    });
+                }
+            }
+        }
+    }
+
+
 
     var tagArray= [];
     for (const category in galleryTags) {
@@ -196,13 +243,7 @@ async function processFavourites(err, data) {
         // a must be equal to b
         return 0;
     });
-    // tagArray.forEach(tag => {
-    //     //table(style='width:100%', border='1')
-    //     //console.log(pug.render("table(style='width:100%', border='1')"));
-    //     console.log(summarizeToHTML(tag));
-    // });
-    // https://codepen.io/yoanmarchal/pen/qXojEM
-    // console.log({processingLog});
+
     processingLog.forEach(element => {
         try {
             fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
@@ -213,16 +254,27 @@ async function processFavourites(err, data) {
     });
 
     
+    // const tagsHTMLTable = summarizeToHTML(tagArray);
+    // const dom = new JSDOM(tagsHTMLTable);
+    // const parser = new dom.window.DOMParser();
+    // const parsedTagsHTMLTable = parser.parseFromString(tagsHTMLTable,"text/html")
+    // var lineToWrite = util.inspect(parsedTagsHTMLTable, {showHidden: false, depth: null, colors: false}) +"\n";
+
+    // var encodedtagsHTMLTable = parsedTagsHTMLTable.querySelector("table").outerHTML
+    // console.log(parsedTagsHTMLTable.body.textContent);
+    
+    var encodedtagsHTMLTable = summarizeToHTML(tagArray);
+
     var bodyStrings = [
         // ...processingLog,
         "</textarea>",
         "<div id='tag_table' class='xport_info_box' style='width:1005'>",
-         summarizeToHTML(tagArray),
+        //  summarizeToHTML(tagArray),
+        encodedtagsHTMLTable,
         "</div>",
         "</div>",
         "</body>"
     ];
-    // console.log({bodyStrings});
 
     bodyStrings.forEach(element => {
         try {
