@@ -1,4 +1,6 @@
 script(src='./resources/javascripts/sortTable.js')
+script(src='./resources/javascripts/drawChart.js')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js')
 table(id="tagSummaryTable")
     tr
         th(style="width:15%" id="string" onclick="sortTable(0)") Category
@@ -6,7 +8,7 @@ table(id="tagSummaryTable")
         th(style="width:5%" id="number" onclick="sortTable(2)") Count
         th Gallery Links
     each tag in locals
-        tr 
+        tr(onclick="drawChart(0)")
             td(style="vertical-align: center; width:15%" id="tdcat_"+tag.category class="xport_favourite_cell")
                 div(style="display: inline-block")
                     div(class="gt")

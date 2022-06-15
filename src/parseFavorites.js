@@ -3,9 +3,13 @@ const axios = require('axios');
 const util = require('util');
 const pug = require('pug');
 const jsdom = require("jsdom");
+const Chart = require('chart.js');
 const { JSDOM } = jsdom;
 const dom = new JSDOM();
 const parser = new dom.window.DOMParser();
+
+
+
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 // const favouritesFile = './data/favorites.txt';
