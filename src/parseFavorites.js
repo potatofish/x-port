@@ -12,8 +12,8 @@ const parser = new dom.window.DOMParser();
 
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-// const favouritesFile = './data/favorites.txt';
-const favouritesFile = './data/favoritesCopy.txt';
+const favouritesFile = './data/favorites.txt';
+// const favouritesFile = './data/favoritesCopy.txt';
 const favoritesHTML = './results.html';
 
 

@@ -1,24 +1,38 @@
 
-function drawChart(rowIdx) {
+function drawChart(rowClickedIdx) {
     // var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    const chartHTMLCanvas = "<canvas id='myChart' width='400' height='400'></canvas>";
-    var myWindow = window.open("", "MsgWindow", "width=400,height=400");
+    const chartWidth = 1000;
+    const chartHTMLCanvas = "<canvas id='myChart' width='"+chartWidth+"' height='"+chartWidth+"'></canvas>";
+    var myWindow = window.open("", "MsgWindow", "width="+chartWidth+",height="+chartWidth+"");
     myWindow.document.write(chartHTMLCanvas); 
     var chart = myWindow.document.getElementById("myChart");
-    console.log(chart);
+    console.log({chart,rowClickedIdx});
     const ctx = chart.getContext('2d');
 
+    const categoryClicked = document.getSelection().focusNode.textContent
+    console.log({categoryClicked});
+
     var rows = document.getElementById("tagSummaryTable").rows;
+    console.log({rows});
     var columnArray = [];
     const labelCounts = {};
     for (const rowIndex in rows) {
         if (Object.hasOwnProperty.call(rows, rowIndex) && rowIndex !== "0") {
             const rowChildren = rows[rowIndex].childNodes;
-            const label = rowChildren[0].innerText;
-            if(typeof labelCounts[label] === "undefined") {
-                labelCounts[label] = 0
+            // console.log({category: rowChildren[0], subcategory: rowChildren[1]});
+            const category = rowChildren[0].childNodes[0].childNodes[0].innerText;
+            const subcategory = rowChildren[1].childNodes[1].childNodes[0].innerText;
+            const count = rowChildren[2].childNodes[1].childNodes[0].innerText;
+            var label = category + ":" + subcategory;
+            // console.log({category, subcategory});
+            // console.log({labelObj: rowChildren[columnIdx].childNodes[1].childNodes[0]});
+            if(typeof labelCounts[category] === "undefined") {
+                labelCounts[category] = {};
             }
-            labelCounts[label]++
+            if(typeof labelCounts[category][subcategory] === "undefined") {
+                labelCounts[category][subcategory] = count;
+            }
+            // console.log({category, subcategory, count: labelCounts[category][subcategory]});
         }
     }
     console.log({labels: labelCounts});
@@ -36,16 +50,17 @@ function drawChart(rowIdx) {
         "BORDER": 1,
         "BACKGROUND": 0.2
     }
-    
+    // const categoryClicked = rows[rowClickedIdx+1].childNodes[0].childNodes[0].childNodes[0].innerText;
+    console.log({rowClickedIdx, categoryClicked});
 
     const myChart = new Chart(ctx, {
         type: 'pie',
         // title: '# of Votes',
         data: {
-            labels: Object.keys(labelCounts),
+            labels: Object.keys(labelCounts[categoryClicked]),
             datasets: [
                 {
-                    data: Object.values(labelCounts),
+                    data: Object.values(labelCounts[categoryClicked]),
                     backgroundColor: [
                         'rgba(' + CHART_COLORS.RED + ', ' + CHART_OPACITIES.BACKGROUND +')',
                         'rgba(' + CHART_COLORS.BLUE + ', ' + CHART_OPACITIES.BACKGROUND +')',
@@ -67,11 +82,11 @@ function drawChart(rowIdx) {
             ]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+            // scales: {
+            //     y: {
+            //         beginAtZero: true
+            //     }
+            // }
         }
     });
 }

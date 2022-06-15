@@ -7,8 +7,9 @@ table(id="tagSummaryTable")
         th(style="width:15%" id="string" onclick="sortTable(1)") Subcategory
         th(style="width:5%" id="number" onclick="sortTable(2)") Count
         th Gallery Links
+    - var tagCount = 0
     each tag in locals
-        tr(onclick="drawChart(0)")
+        tr(onclick="drawChart("+(tagCount++)+")")
             td(style="vertical-align: center; width:15%" id="tdcat_"+tag.category class="xport_favourite_cell")
                 div(style="display: inline-block")
                     div(class="gt")
