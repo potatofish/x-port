@@ -12,9 +12,10 @@ const parser = new dom.window.DOMParser();
 
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
-const favouritesFile = './data/favorites.txt';
-// const favouritesFile = './data/favoritesCopy.txt';
+// const favouritesFile = './data/favorites.txt';
+const favouritesFile = './data/favoritesCopy.txt';
 const favoritesHTML = './results.html';
+const tagSummaryHTML = './tagSummary.html';
 
 
 // write a newline to file to clear it
@@ -56,8 +57,11 @@ headerStrings.forEach(element => {
 
 
 
-const pugSourceFile = './resources/pugSource/parseFavorites.pug';
-const summarizeToHTML = pug.compileFile(pugSourceFile);
+const tagMainConfigFile = './resources/pugSource/tagSummaryMain.pug';
+const tagTableConfigFile = './resources/pugSource/tagSummaryTable.pug';
+
+const renderMainTableHTML = pug.compileFile(tagMainConfigFile);
+const renderTagTableHTML = pug.compileFile(tagTableConfigFile);
 
 const postURL = 'https://api.e-hentai.org/api.php';
 const tagURLPrefix = 'https://e-hentai.org/tag/'
@@ -83,9 +87,15 @@ async function processFavourites(err, data) {
     var favouritesData = [];
     var processingLog = [];
 
+    const virtualDocument = parser.parseFromString(renderMainTableHTML(),"text/html");
     function logProcessing(aStringToLog) {
         try {
             var lineToWrite = util.inspect(aStringToLog, {showHidden: false, depth: null, colors: false}) +"\n";
+            virtualDocument.getElementById("log").innerHTML += lineToWrite;
+            // var serializer = new XMLSerializer();
+            var serializedString = virtualDocument.childNodes[0].innerHTML
+            console.log({serializedString});
+            fs.writeFileSync(tagSummaryHTML, serializedString);
             fs.writeFileSync(favoritesHTML, lineToWrite, fsAppendFlag);
             console.log(lineToWrite);
             // file written successfully
@@ -93,6 +103,8 @@ async function processFavourites(err, data) {
             console.error(err);
         }
     }
+
+
 
     var array = data.split("\r\n")
     for(i in array) {
@@ -268,7 +280,16 @@ async function processFavourites(err, data) {
     // var encodedtagsHTMLTable = parsedTagsHTMLTable.querySelector("table").outerHTML
     // console.log(parsedTagsHTMLTable.body.textContent);
     
-    var encodedtagsHTMLTable = summarizeToHTML(tagArray);
+    var encodedtagsHTMLTable = renderTagTableHTML(tagArray);
+
+    // var serializedString = virtualDocument.childNodes[0].innerHTML
+
+    console.log({innerHTML: virtualDocument.getElementById("tag_table").innerHTML});
+    virtualDocument.getElementById("tag_table").innerHTML = encodedtagsHTMLTable;
+    var serializedString2 = virtualDocument.childNodes[0].innerHTML
+    fs.writeFileSync(tagSummaryHTML, serializedString2);
+
+    console.log({innerHTML: virtualDocument.getElementById("tag_table").innerHTML});
 
     var bodyStrings = [
         // ...processingLog,
@@ -293,6 +314,9 @@ async function processFavourites(err, data) {
             console.error(err);
         }
     });
+
+    console.log({result: virtualDocument.getElementById("log").innerHTML});
+
     
 
     // TODO Add logic to serve a website with the results
