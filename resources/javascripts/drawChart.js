@@ -1,16 +1,26 @@
+var myChart = undefined;
 
 function drawChart(rowClickedIdx) {
     // var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     const chartWidth = 1000;
-    const chartHTMLCanvas = "<canvas id='myChart' width='"+chartWidth+"' height='"+chartWidth+"'></canvas>";
     var myWindow = window.open("", "MsgWindow", "width="+chartWidth+",height="+chartWidth+"");
-    myWindow.document.write(chartHTMLCanvas); 
+    const chartHTMLCanvas = "<canvas id='myChart' width='"+chartWidth+"' height='"+chartWidth+"'></canvas>";
+    myWindow.document.write(chartHTMLCanvas);
+
+    if(typeof myChart === "undefined") {
+        console.log("No Chart drawn");
+    }
+    else {
+        console.log({myChart, typeof: typeof myChart});
+        myChart.destroy();
+    }
+
     var chart = myWindow.document.getElementById("myChart");
     console.log({chart,rowClickedIdx});
     const ctx = chart.getContext('2d');
 
     const categoryClicked = document.getSelection().focusNode.textContent
-    console.log({categoryClicked});
+    console.log({ctx});
 
     var rows = document.getElementById("tagSummaryTable").rows;
     console.log({rows});
@@ -29,9 +39,7 @@ function drawChart(rowClickedIdx) {
             if(typeof labelCounts[category] === "undefined") {
                 labelCounts[category] = {};
             }
-            if(typeof labelCounts[category][subcategory] === "undefined") {
-                labelCounts[category][subcategory] = count;
-            }
+            labelCounts[category][subcategory] = count;
             // console.log({category, subcategory, count: labelCounts[category][subcategory]});
         }
     }
@@ -53,7 +61,7 @@ function drawChart(rowClickedIdx) {
     // const categoryClicked = rows[rowClickedIdx+1].childNodes[0].childNodes[0].childNodes[0].innerText;
     console.log({rowClickedIdx, categoryClicked});
 
-    const myChart = new Chart(ctx, {
+    myChart = new Chart(ctx, {
         type: 'pie',
         // title: '# of Votes',
         data: {
