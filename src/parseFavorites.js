@@ -11,8 +11,8 @@ const parser = new dom.window.DOMParser();
 // const fsAppendFlag = { flag: 'a+' };
 
 
-const favouritesFile = './data/favorites.txt';
-// const favouritesFile = './data/favoritesCopy.txt';
+// const favouritesFile = './data/favorites.txt';
+const favouritesFile = './data/favoritesCopy.txt';
 const tagSummaryHTML = './tagSummary.html';
 
 const tagMainConfigFile = './resources/pugSource/tagSummaryMain.pug';
@@ -46,6 +46,13 @@ function logProcessing(aStringToLog) {
     } catch (err) {
         console.error(err);
     }
+}
+
+function decodeEntity(inputStr) {
+    console.log(inputStr);
+    var textarea = virtualDocument.createElement("textarea");
+    textarea.innerHTML = inputStr;
+    return textarea.value;
 }
 
 async function processFavourites(err, data) {
@@ -93,7 +100,6 @@ async function processFavourites(err, data) {
             logProcessing(apiQueryJSON.gidlist.length + " Galleries Queued for Lookup @ " + apiCallStartTimeReadable);
             
             // Wait for url to return results, then push the contained metadata onto the array
-            // TODO make this async
             var result = await axios.post(eHentaiAPIURL, JSON.stringify(apiQueryJSON))
             var galleryMetaDataResult = result.data.gmetadata;
 
@@ -141,18 +147,20 @@ async function processFavourites(err, data) {
                     galleryTags[categoryKey][subCategoryKey] = [];
                     //console.log("NO EXIST");
                 } 
-
-                const DOMparsedDocument = parser.parseFromString(galleryMetaDataArray[key].title, "text/html");
-                // const doubleDOMparsedTitle = parser.parseFromString(DOMparsedTitle, "text/html").body.innerHTML;
-                //console.log({tagCount: galleryTags[categoryKey][subCategoryKey]});
-                // var encodedTitle = decodeURIComponent(favouritesData[key].title)+"[ ]";
                 
-                function decodeEntity(inputStr) {
-                    var textarea = DOMparsedDocument.createElement("textarea");
-                    textarea.innerHTML = inputStr;
-                    return textarea.value;
-                }
-                const HMTLparsedTitle = decodeEntity(DOMparsedDocument.body.innerHTML);
+                // const DOMparsedDocument = parser.parseFromString(galleryMetaDataArray[key].title, "text/html");
+                // const DOMparsedDocument = parser.parseFromString(galleryMetaDataArray[key].title, "text/html");
+                // // const doubleDOMparsedTitle = parser.parseFromString(DOMparsedTitle, "text/html").body.innerHTML;
+                // //console.log({tagCount: galleryTags[categoryKey][subCategoryKey]});
+                // // var encodedTitle = decodeURIComponent(favouritesData[key].title)+"[ ]";
+                
+                // function decodeEntity(inputStr) {
+                //     var textarea = DOMparsedDocument.createElement("textarea");
+                //     textarea.innerHTML = inputStr;
+                //     return textarea.value;
+                // }
+                // const HMTLparsedTitle = decodeEntity(DOMparsedDocument.body.innerHTML);
+                const HMTLparsedTitle = decodeEntity(galleryMetaDataArray[key].title);
                 
                 // if (favouritesData[key].gid === 2180213) {
                 //     console.log(favouritesData[key].title);
