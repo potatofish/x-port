@@ -11,8 +11,8 @@ const parser = new dom.window.DOMParser();
 // const fsAppendFlag = { flag: 'a+' };
 
 
-// const favouritesFile = './data/favorites.txt';
-const favouritesFile = './data/favoritesCopy.txt';
+const favouritesFile = './data/favorites.txt';
+// const favouritesFile = './data/favoritesCopy.txt';
 const tagSummaryHTML = './tagSummary.html';
 
 const tagMainConfigFile = './resources/pugSource/tagSummaryMain.pug';
@@ -49,12 +49,13 @@ function logProcessing(aStringToLog) {
 }
 
 function decodeEntity(inputStr) {
-    console.log(inputStr);
+    // console.log(inputStr);
     var textarea = virtualDocument.createElement("textarea");
     textarea.innerHTML = inputStr;
     return textarea.value;
 }
 
+const CATEGORY_TEMP = 'temp';
 async function processFavourites(err, data) {
     if (err) {
         console.error(err);
@@ -118,175 +119,95 @@ async function processFavourites(err, data) {
     // Parse API Results
 
     // Build Tag Index Map
-    var galleryTags = {};
+    var galleriesByTags = {};
     for (const key in galleryMetaDataArray) {
         if (Object.hasOwnProperty.call(galleryMetaDataArray, key)) {
             const tags = galleryMetaDataArray[key].tags;
             // logProcessing({gallery: favouritesData[key]});
             for (let tagIndex = 0; tagIndex < tags.length; tagIndex++) {
                 var tag = tags[tagIndex];
-                var categoryKey = tag.split(":")[0];
-                var subCategoryKey = tag.split(":")[1];
+                var category = tag.split(":")[0];
+                var subcategory = tag.split(":")[1];
                 
-                // temporary tags have no preceeding colon in the metadata, only on the site
-                // hardcoded to fix
-                if (typeof subCategoryKey === 'undefined') {
-                    subCategoryKey = categoryKey;
-                    categoryKey = 'temp';
+                // temporary tags are rendered as "temp:<tag>" but 
+                // have no preceeding colon in the metadata and
+                // require hardcoding to fix
+                if (typeof subcategory === 'undefined') {
+                    subcategory = category;
+                    category = CATEGORY_TEMP;
                 }
                 
 
-                // create the category object if it does not exist
-                if (typeof galleryTags[categoryKey] === 'undefined') {
-                    galleryTags[categoryKey] = {};
-                    //console.log("NO EXIST");
-                } 
+                // initialize gallery arrays if thier indexes have
+                // yet to be defined
+                switch ('undefined') {
+                    case typeof galleriesByTags[category]:
+                        galleriesByTags[category] = {};
+                    case  typeof galleriesByTags[category][subcategory]:
+                        galleriesByTags[category][subcategory] = [];
+                }
 
-                // set the subcategory count if it does not exist
-                if (typeof galleryTags[categoryKey][subCategoryKey] === 'undefined') {
-                    galleryTags[categoryKey][subCategoryKey] = [];
-                    //console.log("NO EXIST");
-                } 
-                
-                // const DOMparsedDocument = parser.parseFromString(galleryMetaDataArray[key].title, "text/html");
-                // const DOMparsedDocument = parser.parseFromString(galleryMetaDataArray[key].title, "text/html");
-                // // const doubleDOMparsedTitle = parser.parseFromString(DOMparsedTitle, "text/html").body.innerHTML;
-                // //console.log({tagCount: galleryTags[categoryKey][subCategoryKey]});
-                // // var encodedTitle = decodeURIComponent(favouritesData[key].title)+"[ ]";
-                
-                // function decodeEntity(inputStr) {
-                //     var textarea = DOMparsedDocument.createElement("textarea");
-                //     textarea.innerHTML = inputStr;
-                //     return textarea.value;
-                // }
-                // const HMTLparsedTitle = decodeEntity(DOMparsedDocument.body.innerHTML);
                 const HMTLparsedTitle = decodeEntity(galleryMetaDataArray[key].title);
-                
-                // if (favouritesData[key].gid === 2180213) {
-                //     console.log(favouritesData[key].title);
-                //     console.log(decodeEntity(favouritesData[key].title));
-                //     console.log(HMTLparsedTitle);
-                // }
-                //console.log(doubleDOMparsedTitle);
-                galleryTags[categoryKey][subCategoryKey].push([galleryMetaDataArray[key].gid, galleryMetaDataArray[key].token, HMTLparsedTitle]);
-
-                // if (encodedTitle !== favouritesData[key].title ) {
-                //     console.log({encodedTitle, title:favouritesData[key].title});
-                // }
-                
+                galleriesByTags[category][subcategory].push([galleryMetaDataArray[key].gid, galleryMetaDataArray[key].token, HMTLparsedTitle]);
             }
 
         }
     }
     
+    
+    const titleIdx = 2;
+    var tagSummaryTableData= [];
+    for (const category in galleriesByTags) {
+        if (Object.hasOwnProperty.call(galleriesByTags, category)) {
+            for (const subcategory in galleriesByTags[category]) {
+                if (Object.hasOwnProperty.call(galleriesByTags[category], subcategory)) {
 
-    for (const category in galleryTags) {
-        if (Object.hasOwnProperty.call(galleryTags, category)) {
-            for (const subcategory in galleryTags[category]) {
-                if (Object.hasOwnProperty.call(galleryTags[category], subcategory)) {
-                    galleryTags[category][subcategory].sort((a, b) => {
-                        // console.log({cat:category + ":" + subcategory, a,b});
-                        if (a[2] < b[2]) {
-                          return -1;
+                    // sort each array of galleries stored for each category/subcategory combination based on Title
+                    galleriesByTags[category][subcategory].sort((a, b) => {
+                        // console.log({category, subcategory, titleIdx, titles: {a: a[titleIdx], b: b[titleIdx]}});
+                        switch (true) {
+                            case (a[titleIdx] < b[titleIdx]):
+                                return -1;
+                            case (a[titleIdx] > b[titleIdx]):
+                                return 1;
+                            default: // a must be equal to b
+                                return 0;
                         }
-                        if (a[2] > b[2]) {
-                          return 1;
-                        }
-                        // a must be equal to b
-                        return 0;
                     });
-                }
-            }
-        }
-    }
 
-
-
-    var tagArray= [];
-    for (const category in galleryTags) {
-        if (Object.hasOwnProperty.call( galleryTags, category)) {
-            for (const subcategory in galleryTags[category]) {
-                if (Object.hasOwnProperty.call(galleryTags[category], subcategory)) {
-                    tagArray.push({
+                    // put each combination & their galleries into an array for HTML rendering input
+                    tagSummaryTableData.push({
                         category, 
                         subcategory, 
-                        galleries: galleryTags[category][subcategory],
-                        size: galleryTags[category][subcategory].length,
+                        galleries: galleriesByTags[category][subcategory],
+                        count: galleriesByTags[category][subcategory].length,
                         url: eHentaiTagURLPrefix + category.replace(/\s/g, '+') + ":" + subcategory.replace(/\s/g, '+')
                     });
                 }
             }
         }
     }
-    tagArray.sort((a, b) => {
-        //console.log({a,b});
-        if (parseInt(a.size) > parseInt(b.size)) {
-          return -1;
+
+    // Sort Data on category/subcategory combination with the largest count descending
+    tagSummaryTableData.sort((a, b) => {
+        // console.log({count:{a: a.count, b: b.count}});
+        switch (true) {
+            case (parseInt(a.count) > parseInt(b.count)):
+                return -1;
+            case (parseInt(a.count) < parseInt(b.count)):
+                return 1;
+            default: // a must be equal to b
+                return 0;
         }
-        if (parseInt(a.size) < parseInt(b.size)) {
-          return 1;
-        }
-        // a must be equal to b
-        return 0;
     });
-
-    // processingLog.forEach(element => {
-    //     try {
-    //         fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
-    //         // file written successfully
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // });
-
     
-    // const tagsHTMLTable = summarizeToHTML(tagArray);
-    // const dom = new JSDOM(tagsHTMLTable);
-    // const parser = new dom.window.DOMParser();
-    // const parsedTagsHTMLTable = parser.parseFromString(tagsHTMLTable,"text/html")
-    // var lineToWrite = util.inspect(parsedTagsHTMLTable, {showHidden: false, depth: null, colors: false}) +"\n";
+    var tagSummaryTableHTML = renderTagTableHTML(tagSummaryTableData);
+    // console.log({tagSummaryTableHTML});
+    const tagSummaryTableId = "tag_table";
+    virtualDocument.getElementById(tagSummaryTableId).innerHTML = tagSummaryTableHTML;
 
-    // var encodedtagsHTMLTable = parsedTagsHTMLTable.querySelector("table").outerHTML
-    // console.log(parsedTagsHTMLTable.body.textContent);
-    
-    var encodedtagsHTMLTable = renderTagTableHTML(tagArray);
+    fs.writeFileSync(tagSummaryHTML, virtualDocument.childNodes[0].innerHTML);
 
-    // var serializedString = virtualDocument.childNodes[0].innerHTML
-
-    // console.log({innerHTML: virtualDocument.getElementById("tag_table").innerHTML});
-    virtualDocument.getElementById("tag_table").innerHTML = encodedtagsHTMLTable;
-    var serializedString2 = virtualDocument.childNodes[0].innerHTML
-    fs.writeFileSync(tagSummaryHTML, serializedString2);
-
-    // console.log({innerHTML: virtualDocument.getElementById("tag_table").innerHTML});
-
-    // var bodyStrings = [
-    //     // ...processingLog,
-    //     "</textarea>",
-    //     "</div>", // closes footer
-    //     // "<div style='position: fixed; left: 5%; right: 5%; top:0; height: -60px; text-align: center' class='content'>",
-    //     "<div id='tag_table' class='xport_info_box' style='position: relative; z-index: 99; vertical-align: top; top:0; bottom:60px; left:0; right: 0;display:inline-block'>",
-    //     //  summarizeToHTML(tagArray),
-    //     encodedtagsHTMLTable,
-    //     "</div>",
-    //     "</div>",
-    //     "</div>",
-    //     "</body>"
-    // ];
-
-    // bodyStrings.forEach(element => {
-    //     try {
-    //         fs.writeFileSync(favoritesHTML, element, fsAppendFlag);
-    //         // console.log({element});
-    //         // file written successfully
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // });
-
-    // console.log({result: virtualDocument.getElementById("log").innerHTML});
-
-    
 
     // TODO Add logic to serve a website with the results
 }
