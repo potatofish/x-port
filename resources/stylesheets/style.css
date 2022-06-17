@@ -87,6 +87,11 @@ div.header {
 	top: 0;
 }
 
+div.header_content {
+	display: inline-block;
+	vertical-align: middle;
+}
+
 div.main {
 	position: fixed;
 	top: 5%;
@@ -102,8 +107,8 @@ div.footer {
 	z-index: 999; 
 	/* height: 60px;  */
 	bottom:0; 
-	left:1em; 
-	right:1em;
+	/* left:1em;  */
+	/* right:1em; */
 	/* display:inline-block */
 }
 
@@ -142,7 +147,7 @@ div.results {
 	left: 50%;
 	border-radius: 3px;
 	background-color: #e3e0d1;
-	border: 1px solid #5c0d12;
+	border-left: 1px solid #5c0d12;
 }
 
 div.results_scroll_box {
@@ -165,7 +170,7 @@ div.results_data {
 	background-color: #e3e0d1;
 	border: 1px solid #5c0d12; */
 	z-index: 99;
-	width: 90%;
+	width: 99%;
 	padding: 0;
 	text-align: left;
 	height: 100%;
