@@ -4,8 +4,12 @@ body(style='font-size:8pt;font-family:arial,helvetica,sans-serif;color:#5C0D11;b
     div(class='header') Tag Summary
     div(class='main')
         div(class="chart")
-            canvas(class="chart" id='myChart' height=1000)
+            div(class="chart_contents")
+                div(class="chart_draw_box")
+                    canvas(class="chart" id='myChart' style="width=800;height=800" width=800 height=800)
         div(class="results")
-            div#tag_table(class='xport_tag_box')
+            div(class="results_scroll_box")
+                div#tag_table(class='results_data')
+                    table#tagSummaryTable
     div(class='footer')
-        textarea#log(class='xport_info_textarea') #{labels}
+        textarea#log(class='logging_footer') #{labels}

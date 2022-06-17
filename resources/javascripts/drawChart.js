@@ -16,12 +16,18 @@ function drawChart(rowClickedIdx) {
     }
 
     // var chart = myWindow.document.getElementById("myChart");
-    var chart = document.getElementById("myChart");
-    console.log({chart,rowClickedIdx});
-    const ctx = chart.getContext('2d');
-
     const categoryClicked = document.getSelection().focusNode.textContent
-    console.log({ctx});
+    var chartCanvas = document.getElementById("myChart");
+    var divSize = { 
+        height: chartCanvas.parentNode.clientHeight,
+        width:  chartCanvas.parentNode.clientHeight,
+        style: ""
+    };
+
+
+
+    const ctx = chartCanvas.getContext('2d');
+    // console.log({ctx});
 
     var rows = document.getElementById("tagSummaryTable").rows;
     console.log({rows});
@@ -98,4 +104,22 @@ function drawChart(rowClickedIdx) {
             // }
         }
     });
+    // myChart.canvas.parentNode.style.height = myChart.canvas.parentNode.style.width;
+    // myChart.resize()
+
+    // var chartCanvasPrintableBefore = { 
+    //     height: chartCanvas.width,
+    //     width:  chartCanvas.height,
+    //     style:  chartCanvas.attributes["style"]
+    // }
+
+    //  chartCanvas.parentNode.width = divSize.width;
+    //  chartCanvas.parentNode.height = divSize.height;
+    //  chartCanvas.attributes["style"].value= "";
+    // // chartCanvas.attributes[widthIdx]
+    // // chartCanvas.attributes[heightIdx]
+
+    console.log(chartCanvas.parentNode);
+    console.log(chartCanvas);
+    // myChart.resize()
 }
