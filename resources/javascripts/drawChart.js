@@ -3,9 +3,9 @@ var myChart = undefined;
 function drawChart(rowClickedIdx) {
     // var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     const chartWidth = 1000;
-    var myWindow = window.open("", "MsgWindow", "width="+chartWidth+",height="+chartWidth+"");
-    const chartHTMLCanvas = "<canvas id='myChart' width='"+chartWidth+"' height='"+chartWidth+"'></canvas>";
-    myWindow.document.write(chartHTMLCanvas);
+    // var myWindow = window.open("", "MsgWindow", "width="+chartWidth+",height="+chartWidth+"");
+    // const chartHTMLCanvas = "<canvas id='myChart' width='"+chartWidth+"' height='"+chartWidth+"'></canvas>";
+    // myWindow.document.write(chartHTMLCanvas);
 
     if(typeof myChart === "undefined") {
         console.log("No Chart drawn");
@@ -15,7 +15,8 @@ function drawChart(rowClickedIdx) {
         myChart.destroy();
     }
 
-    var chart = myWindow.document.getElementById("myChart");
+    // var chart = myWindow.document.getElementById("myChart");
+    var chart = document.getElementById("myChart");
     console.log({chart,rowClickedIdx});
     const ctx = chart.getContext('2d');
 

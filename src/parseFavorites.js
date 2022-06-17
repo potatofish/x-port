@@ -11,8 +11,8 @@ const parser = new dom.window.DOMParser();
 // const fsAppendFlag = { flag: 'a+' };
 
 
-const favouritesFile = './data/favorites.txt';
-// const favouritesFile = './data/favoritesCopy.txt';
+// const favouritesFile = './data/favorites.txt';
+const favouritesFile = './data/favoritesCopy.txt';
 const tagSummaryHTML = './tagSummary.html';
 
 const tagMainConfigFile = './resources/pugSource/tagSummaryMain.pug';
