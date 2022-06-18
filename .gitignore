@@ -13,3 +13,4 @@ test/
 post_build*.*
 results.html
 results2.log
+tagSummary.html
